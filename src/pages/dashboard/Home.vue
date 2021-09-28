@@ -73,21 +73,21 @@ export default {
   methods: {
     getServers() {
       const vm = this;
-      vm.axios.get(vm.$root.endpoint + "api/aws/dashboard").then((response) => {
-        var result = response && response.data;
-        vm.awsProjects = result;
-      });
+      // vm.axios.get(vm.$root.endpoint + "api/aws/dashboard").then((response) => {
+      //   var result = response && response.data;
+      //   vm.awsProjects = result;
+      // });
 
       //vm.axios.get(vm.$root.endpoint + "api/aws/dashboard").then((response) => {
-      vm.axios.get(vm.$root.endpoint + "azure/dashboard").then((response) => {
-        var result = response && response.data;
-        vm.azureProjects = result;
-      });
+      // vm.axios.get(vm.$root.endpoint + "azure/dashboard").then((response) => {
+      //   var result = response && response.data;
+      //   vm.azureProjects = result;
+      // });
 
-      vm.axios.get(vm.$root.endpoint + "gcp/dashboard").then((response) => {
-        var result = response && response.data;
-        vm.gcpProjects = result;
-      });
+      // vm.axios.get(vm.$root.endpoint + "gcp/dashboard").then((response) => {
+      //   var result = response && response.data;
+      //   vm.gcpProjects = result;
+      // });
     },
     getSystems() {
       const vm = this;
