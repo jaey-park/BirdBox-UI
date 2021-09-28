@@ -100,23 +100,23 @@ export default {
       const vm = this;
       vm.loading = true;
       vm.awsProjects = [];
-      await vm.axios
-        .get(vm.$root.endpoint + "api/aws/dashboard/refresh")
-        .then((response) => {
-          var result = response && response.data;
-          vm.awsProjects = result;
-          vm.loading = false;
-        });
+      // await vm.axios
+      //   .get(vm.$root.endpoint + "api/aws/dashboard/refresh")
+      //   .then((response) => {
+      //     var result = response && response.data;
+      //     vm.awsProjects = result;
+      //     vm.loading = false;
+      //   });
     },
     async refreshAll() {
       const vm = this;
-      await vm.axios
-        .get(vm.$root.endpoint + "api/aws/refresh")
-        .then((response) => {
-          var result = response && response.data;
-          vm.awsProjects = result;
-        })
-        .then(location.reload());
+      // await vm.axios
+      //   .get(vm.$root.endpoint + "api/aws/refresh")
+      //   .then((response) => {
+      //     var result = response && response.data;
+      //     vm.awsProjects = result;
+      //   })
+      //   .then(location.reload());
     },
     next() {
       const active = parseInt(this.active);
