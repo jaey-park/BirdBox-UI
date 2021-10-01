@@ -504,7 +504,7 @@ export default {
 
   computed: {
     listCardHeight() {
-      return window.innerHeight - this.toolbarHeight - 20
+      return this.$vuetify.breakpoint.height - this.toolbarHeight - 20
     }
   },
 
