@@ -526,20 +526,20 @@ export default {
 
       let url = `${ori}/api/aws/phd/694833324522/active`;
       //console.log(window.location.host)
-      // Axios.get(url).then((res) => {
-      //   let tmp = [];
-      //   res.data.forEach((elem) => {
-      //     let eventDetail = elem["message"]; //JSON.parse(elem.message);
-      //     console.log(eventDetail);
-      //     tmp = tmp.concat({
-      //       //service:eventDetail["detail"]["service"].substr(5),
-      //       isActive: true,
-      //       actionAt: eventDetail["time"],
-      //       title: eventDetail["detail"]["eventTypeCode"].substr(4),
-      //     });
-      //   });
-      //   this.notifications = tmp;
-      // });
+      Axios.get(url).then((res) => {
+        let tmp = [];
+        res.data.forEach((elem) => {
+          let eventDetail = elem["message"]; //JSON.parse(elem.message);
+          console.log(eventDetail);
+          tmp = tmp.concat({
+            //service:eventDetail["detail"]["service"].substr(5),
+            isActive: true,
+            actionAt: eventDetail["time"],
+            title: eventDetail["detail"]["eventTypeCode"].substr(4),
+          });
+        });
+        this.notifications = tmp;
+      });
     },
     routeIntoEventPage() {
       window.location.href = `${window.location.origin}/#/awsphd`;
@@ -554,20 +554,20 @@ export default {
 
       let url = `${ori}/api/aws/phd/694833324522/active`;
       //console.log(window.location.host)
-      // Axios.get(url).then((res) => {
-      //   let tmp = [];
-      //   res.data.forEach((elem) => {
-      //     let eventDetail = elem["message"]; //JSON.parse(elem.message);
-      //     console.log(eventDetail);
-      //     tmp = tmp.concat({
-      //       //service:eventDetail["detail"]["service"].substr(5),
-      //       isActive: true,
-      //       actionAt: eventDetail["time"],
-      //       title: eventDetail["detail"]["eventTypeCode"].substr(4),
-      //     });
-      //   });
-      //   this.notifications = tmp;
-      // });
+      Axios.get(url).then((res) => {
+        let tmp = [];
+        res.data.forEach((elem) => {
+          let eventDetail = elem["message"]; //JSON.parse(elem.message);
+          console.log(eventDetail);
+          tmp = tmp.concat({
+            //service:eventDetail["detail"]["service"].substr(5),
+            isActive: true,
+            actionAt: eventDetail["time"],
+            title: eventDetail["detail"]["eventTypeCode"].substr(4),
+          });
+        });
+        this.notifications = tmp;
+      });
     },
     routeIntoGCPEventPage() {
       window.location.href = `${window.location.origin}/#/gcp/incident`;
