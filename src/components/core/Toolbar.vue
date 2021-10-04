@@ -7,9 +7,9 @@
       v-model="select"
       :items="searchList"
       @focus="navItemsMakeList"
+      :menu-props="searchCompOptions"
       clearable
       hide-details
-      hide-selected
       item-text="show"
       item-value="show"
       label="Search"
@@ -23,11 +23,22 @@
         </v-list-tile>
       </template>
       <template v-slot:item="{ item }">
-        <v-list-tile>
-          <v-list-tile-title style="cursor:pointer" @click="changeRoute(item)">
-            {{ item.show }}
-          </v-list-tile-title>
-        </v-list-tile>
+        <div @click="clickSearchItem(item)" :style="searchItemStyle">
+          <v-list-tile v-if="item.route !== undefined && item.route !== ''">
+            <v-list-tile-title style="cursor:pointer">
+              {{ item.show }}
+            </v-list-tile-title>
+            <v-spacer />
+          </v-list-tile>
+          <v-list-tile v-if="item.redirect !== undefined && item.redirect !== null">
+            <v-list-tile-title style="cursor:pointer">
+              {{ item.show }}
+            </v-list-tile-title>
+            <v-list-tile-action>
+              <v-icon>open_in_new</v-icon>
+            </v-list-tile-action>
+          </v-list-tile>
+        </div>
       </template>
     </v-autocomplete>
 
@@ -360,11 +371,18 @@ export default {
   data() {
     return {
       nav: navItems,
-      searchResultList: [],
       searchList: [],
-      isLoading: false,
-      search: null,
       select: null,
+      searchCompOptions: {
+        closeOnClick: false,
+        closeOnContentClick: true,
+        disableKeys: true,
+        openOnClick: false,
+        maxHeight: 400,
+        offsetY: true,
+        offsetOverflow: true,
+        transition: false
+      },
       // --
       rating: null,
       dialog: false,
@@ -473,6 +491,13 @@ export default {
       // ]
     };
   },
+  computed: {
+    searchItemStyle() {
+      return {
+        width: `${this.$vuetify.breakpoint.width /4 + 10}px`
+      }
+    }
+  },
 
   methods: {
     toggleNavigationBar() {
@@ -578,7 +603,15 @@ export default {
         if (this.nav[parentItemKey].route !== undefined && this.nav[parentItemKey].route !== '') {
           this.searchList.push({
             show: this.nav[parentItemKey].title,
-            route: this.nav[parentItemKey].route
+            route: this.nav[parentItemKey].route,
+            redirect: null,
+          })
+        }
+        if (this.nav[parentItemKey].redirect !== undefined && this.nav[parentItemKey].redirect !== null) {
+          this.searchList.push({
+            show: this.nav[parentItemKey].title,
+            route: '',
+            redirect: this.nav[parentItemKey].redirect,
           })
         }
         if (this.nav[parentItemKey].child !== undefined && this.nav[parentItemKey].child.length > 0) {
@@ -586,7 +619,15 @@ export default {
             if (childItem.route !== undefined && childItem.route !== '') {
               this.searchList.push({
                 show: `${this.nav[parentItemKey].title} > ${childItem.title}`,
-                route: childItem.route
+                route: childItem.route,
+                redirect: null
+              })
+            }
+            if (childItem.redirect !== undefined && childItem.redirect !== null) {
+              this.searchList.push({
+                show: `${this.nav[parentItemKey].title} > ${childItem.title}`,
+                route: '',
+                redirect: childItem.redirect
               })
             }
             if (childItem.child !== undefined && childItem.child.length > 0) {
@@ -594,7 +635,15 @@ export default {
                 if (grandChildItem.route !== undefined && grandChildItem.route !== '') {
                   this.searchList.push({
                     show: `${this.nav[parentItemKey].title} > ${childItem.title} > ${grandChildItem.title}`,
-                    route: grandChildItem.route
+                    route: grandChildItem.route,
+                    redirect: null
+                  })
+                }
+                if (grandChildItem.redirect !== undefined && grandChildItem.redirect !== null) {
+                  this.searchList.push({
+                    show: `${this.nav[parentItemKey].title} > ${childItem.title} > ${grandChildItem.title}`,
+                    route: '',
+                    redirect: grandChildItem.redirect
                   })
                 }
               })
@@ -603,10 +652,14 @@ export default {
         }
       }
     },
-    changeRoute(value) {
-      this.select = value
-      this.$router.push({ name: value.route });
-    },
+    clickSearchItem(value) {
+      if (value.route !== undefined && value.route !== '') {
+        this.$router.push({ name: value.route })
+      }
+      if (value.redirect !== undefined && value.redirect !== null) {
+        window.open(value.redirect)
+      }
+    }
   },
 };
 </script>
