@@ -4,11 +4,12 @@
       <v-toolbar-side-icon @click="toggleNavigationBar"></v-toolbar-side-icon>
     </v-toolbar-title>
     <v-autocomplete
-      v-model="select"
+      v-model="selectedValue"
       :items="searchList"
       @focus="navItemsMakeList"
       :menu-props="searchCompOptions"
       clearable
+      :loading="loading"
       hide-details
       item-text="show"
       item-value="show"
@@ -372,7 +373,8 @@ export default {
     return {
       nav: navItems,
       searchList: [],
-      select: null,
+      loading: false,
+      selectedValue: null,
       searchCompOptions: {
         closeOnClick: false,
         closeOnContentClick: true,
@@ -652,12 +654,23 @@ export default {
         }
       }
     },
-    clickSearchItem(value) {
-      if (value.route !== undefined && value.route !== '') {
-        this.$router.push({ name: value.route })
+    async clickSearchItem(value) {
+      this.loading = true
+      try {
+        if (value.route !== undefined && value.route !== '') {
+          await this.$router.push({ name: value.route })
+        }
+        if (value.redirect !== undefined && value.redirect !== null) {
+          await window.open(value.redirect)
+        }
+      } catch (error) {
+        console.log('check route or redirect')
       }
-      if (value.redirect !== undefined && value.redirect !== null) {
-        window.open(value.redirect)
+      finally {
+        setTimeout(() => {
+          this.selectedValue = null
+          this.loading = false
+        }, 1150);
       }
     }
   },
