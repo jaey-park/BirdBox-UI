@@ -1,4 +1,14 @@
 const navItems = {
+    /**
+     * 기본 format
+     * {
+     *  _id: 고유 element id
+     *  icon : icon string or 값 없을 경우 ''
+     *  route: route 하게 될 uri string or 값 없을 경우 ''
+     *  redirect: redirect 하게 될 uri string or 값 없을 경우 null
+     *  child: 하위 자식 element 구성 or 값 없을 경우 []
+     * }
+     */
     home: {
         _id: 1,
         title: 'Home',
