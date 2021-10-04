@@ -3,12 +3,46 @@
     <v-toolbar-title>
       <v-toolbar-side-icon @click="toggleNavigationBar"></v-toolbar-side-icon>
     </v-toolbar-title>
-    <!-- <v-text-field
-      flat
-      solo-inverted
-      append-icon="search"
-      label="Search">
-    </v-text-field> -->
+    <v-autocomplete
+      v-model="selectedValue"
+      :items="searchList"
+      @focus="navItemsMakeList"
+      :menu-props="searchCompOptions"
+      clearable
+      :loading="loading"
+      hide-details
+      item-text="show"
+      item-value="show"
+      label="Search"
+      solo
+    >
+      <template v-slot:no-data>
+        <v-list-tile>
+          <v-list-tile-title>
+            검색 결과가 없습니다.
+          </v-list-tile-title>
+        </v-list-tile>
+      </template>
+      <template v-slot:item="{ item }">
+        <div @click="clickSearchItem(item)" :style="searchItemStyle">
+          <v-list-tile v-if="item.route !== undefined && item.route !== ''">
+            <v-list-tile-title style="cursor:pointer">
+              {{ item.show }}
+            </v-list-tile-title>
+            <v-spacer />
+          </v-list-tile>
+          <v-list-tile v-if="item.redirect !== undefined && item.redirect !== null">
+            <v-list-tile-title style="cursor:pointer">
+              {{ item.show }}
+            </v-list-tile-title>
+            <v-list-tile-action>
+              <v-icon>open_in_new</v-icon>
+            </v-list-tile-action>
+          </v-list-tile>
+        </div>
+      </template>
+    </v-autocomplete>
+
     <v-spacer></v-spacer>
     <!--
     <v-rating
@@ -119,6 +153,7 @@
           <v-list-item
             v-for="(item, index) in CSPUpdateItems"
             :key="index"
+            name="dd"
           >
             <v-btn v-bind:href="item.url" target="_blank">{{ item.title }}</v-btn>
           </v-list-item>
@@ -327,6 +362,8 @@
 
 <script>
 import Axios from "axios";
+import navItems from './NavigationItems'
+
 export default {
   created() {
     const vm = this;
@@ -334,6 +371,21 @@ export default {
   },
   data() {
     return {
+      nav: navItems,
+      searchList: [],
+      loading: false,
+      selectedValue: null,
+      searchCompOptions: {
+        closeOnClick: false,
+        closeOnContentClick: true,
+        disableKeys: true,
+        openOnClick: false,
+        maxHeight: 400,
+        offsetY: true,
+        offsetOverflow: true,
+        transition: false
+      },
+      // --
       rating: null,
       dialog: false,
       dialogSettings: false,
@@ -441,6 +493,13 @@ export default {
       // ]
     };
   },
+  computed: {
+    searchItemStyle() {
+      return {
+        width: `${this.$vuetify.breakpoint.width /4 + 10}px`
+      }
+    }
+  },
 
   methods: {
     toggleNavigationBar() {
@@ -540,6 +599,80 @@ export default {
     routeIntoGCPEventPage() {
       window.location.href = `${window.location.origin}/#/gcp/incident`;
     },
+    navItemsMakeList() {
+      this.searchList = []
+      for ( var parentItemKey in this.nav) {
+        if (this.nav[parentItemKey].route !== undefined && this.nav[parentItemKey].route !== '') {
+          this.searchList.push({
+            show: this.nav[parentItemKey].title,
+            route: this.nav[parentItemKey].route,
+            redirect: null,
+          })
+        }
+        if (this.nav[parentItemKey].redirect !== undefined && this.nav[parentItemKey].redirect !== null) {
+          this.searchList.push({
+            show: this.nav[parentItemKey].title,
+            route: '',
+            redirect: this.nav[parentItemKey].redirect,
+          })
+        }
+        if (this.nav[parentItemKey].child !== undefined && this.nav[parentItemKey].child.length > 0) {
+          this.nav[parentItemKey].child.forEach(childItem => {
+            if (childItem.route !== undefined && childItem.route !== '') {
+              this.searchList.push({
+                show: `${this.nav[parentItemKey].title} > ${childItem.title}`,
+                route: childItem.route,
+                redirect: null
+              })
+            }
+            if (childItem.redirect !== undefined && childItem.redirect !== null) {
+              this.searchList.push({
+                show: `${this.nav[parentItemKey].title} > ${childItem.title}`,
+                route: '',
+                redirect: childItem.redirect
+              })
+            }
+            if (childItem.child !== undefined && childItem.child.length > 0) {
+              childItem.child.forEach(grandChildItem => {
+                if (grandChildItem.route !== undefined && grandChildItem.route !== '') {
+                  this.searchList.push({
+                    show: `${this.nav[parentItemKey].title} > ${childItem.title} > ${grandChildItem.title}`,
+                    route: grandChildItem.route,
+                    redirect: null
+                  })
+                }
+                if (grandChildItem.redirect !== undefined && grandChildItem.redirect !== null) {
+                  this.searchList.push({
+                    show: `${this.nav[parentItemKey].title} > ${childItem.title} > ${grandChildItem.title}`,
+                    route: '',
+                    redirect: grandChildItem.redirect
+                  })
+                }
+              })
+            }
+          });
+        }
+      }
+    },
+    async clickSearchItem(value) {
+      this.loading = true
+      try {
+        if (value.route !== undefined && value.route !== '') {
+          await this.$router.push({ name: value.route })
+        }
+        if (value.redirect !== undefined && value.redirect !== null) {
+          await window.open(value.redirect)
+        }
+      } catch (error) {
+        console.log('check route or redirect')
+      }
+      finally {
+        setTimeout(() => {
+          this.selectedValue = null
+          this.loading = false
+        }, 1150);
+      }
+    }
   },
 };
 </script>
